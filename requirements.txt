@@ -1,0 +1,6 @@
+setuptools~=46.4.0
+xlwings
+pandas
+numpy
+matplotlib
+datetime
