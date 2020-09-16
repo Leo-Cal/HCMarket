@@ -39,12 +39,24 @@ def uf_separator(book,uf):
     caixas_small = small.filter(like='CAIXA', axis=0)
     autogestao_small = small.filter(like='AUTOGESTÃO', axis=0)
     cooperativa_small = small.filter(like='COOPERATIVA', axis=0)
+
     caixas_medium = medium.filter(like='CAIXA', axis=0)
     autogestao_medium = medium.filter(like='AUTOGESTÃO', axis=0)
     cooperativa_medium = medium.filter(like='COOPERATIVA', axis=0)
+
     caixas_big = big.filter(like='CAIXA', axis=0)
     autogestao_big = big.filter(like='AUTOGESTÃO', axis=0)
     cooperativa_big = big.filter(like='COOPERATIVA', axis=0)
+
+    small_indexes = [k for k in small.index if ('CAIXA' in k or 'AUTOGESTÃO' in k or 'COOPERATIVA' in k or 'BENEFICENTE' in k)]
+    df_operadoras_small = small.drop(small_indexes,axis=0)
+
+    medium_indexes = [k for k in medium.index if ('CAIXA' in k or 'AUTOGESTÃO' in k or 'COOPERATIVA' in k or 'BENEFICENTE' in k)]
+    df_operadoras_medium = medium.drop(medium_indexes, axis=0)
+
+    big_indexes = [k for k in big.index if ('CAIXA' in k or 'AUTOGESTÃO' in k or 'COOPERATIVA' in k or 'BENEFICENTE' in k)]
+    df_operadoras_big = big.drop(big_indexes, axis=0)
+
     total_caixas_small = caixas_small[uf].count() + autogestao_small[uf].count() + cooperativa_small[uf].count()
     total_caixas_medium = caixas_medium[uf].count() + autogestao_medium[uf].count() + cooperativa_medium[uf].count()
     total_caixas_big = caixas_big[uf].count() + autogestao_big[uf].count() + cooperativa_big[uf].count()
@@ -68,6 +80,20 @@ def uf_separator(book,uf):
     sht.range('P3').value = {"Caixas/Autogestão": total_caixas_medium, "Operadoras ex-Unimed": operadoras_medium}
     sht.range('R2').value = "Big"
     sht.range('R3').value = {"Caixas/Autogestão": total_caixas_big, "Operadoras ex-Unimed": operadoras_big}
+
+    sht.range('U1').value = "Small Operadoras"
+    sht.range('X1').value = "Medium Operadoras"
+    sht.range('AA1').value = "Big Operadoras"
+    sht.range('U2').value = df_operadoras_small
+    sht.range('X2').value = df_operadoras_medium
+    sht.range('AA2').value = df_operadoras_big
+    total_operadoras = pd.concat([df_operadoras_small,df_operadoras_medium,df_operadoras_big])
+    total_operadoras["Members"] = uf_data[len(uf_data)-1] * total_operadoras[uf]
+    print(total_operadoras)
+
+    path = "exported data/%s_addressable.txt"%uf
+    total_operadoras.to_csv(path_or_buf=path,sep=';',index=True)
+
 
     #Export data
     small.to_csv(path_or_buf='exported data/uf_small.txt',sep=';',index=True)

@@ -14,6 +14,8 @@ def rm_separator(book,rm):
     indexes = data.index
     columns = data.columns
 
+    path_small = 'exported data/'.join(rm)
+    #print(path_small)
     #get data from RM
     rm_data = data[rm]
     #filter unimeds
@@ -71,7 +73,6 @@ def rm_separator(book,rm):
 
     #Export data
     small.to_csv(path_or_buf='exported data/rm_small.txt',sep=';',index=True)
-    medium.to_csv(path_or_buf='exported data/rm_medium.txt', sep=';', index=True)
     medium.to_csv(path_or_buf='exported data/rm_medium.txt', sep=';', index=True)
     big.to_csv(path_or_buf='exported data/rm_big.txt', sep=';', index=True)
 
